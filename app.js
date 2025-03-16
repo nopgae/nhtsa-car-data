@@ -1,4 +1,3 @@
-// This is our main car browser component
 const CarBrowser = () => {
     // Set up our data state variables
     const [cars, setCars] = React.useState([]);
@@ -136,176 +135,218 @@ const CarBrowser = () => {
     
     // Show loading message while data is loading
     if (isLoading) {
-      return Loading car data...;
+      return <div className="loading">Loading car data...</div>;
     }
     
     // The main component layout
     return (
-      
-        
-          Used Car Browser
-        
+      <div className="container">
+        <div className="header">
+          <h1>NHTSA Car Browser</h1>
+        </div>
         
         {/* Statistics section */}
-        
-          Dataset Overview
-          
+        <div className="stats">
+          <h2>Dataset Overview</h2>
+          <div className="stats-grid">
+            <div className="stat-card">
+              <div className="stat-value">{stats.totalCars}</div>
+              <div className="stat-label">Total Cars</div>
+            </div>
             
-              {stats.totalCars}
-              Total Cars
+            <div className="stat-card">
+              <div className="stat-value">${stats.avgPrice.toLocaleString()}</div>
+              <div className="stat-label">Average Price</div>
+            </div>
             
+            <div className="stat-card">
+              <div className="stat-value">{stats.avgMileage.toLocaleString()} mi</div>
+              <div className="stat-label">Average Mileage</div>
+            </div>
             
-            
-              ${stats.avgPrice.toLocaleString()}
-              Average Price
-            
-            
-            
-              {stats.avgMileage.toLocaleString()} mi
-              Average Mileage
-            
-            
-            
-              {stats.avgYear}
-              Average Year
-            
-          
-        
+            <div className="stat-card">
+              <div className="stat-value">{stats.avgYear}</div>
+              <div className="stat-label">Average Year</div>
+            </div>
+          </div>
+        </div>
         
         {/* Filters section */}
-        
-          Find Your Car
+        <div className="filters">
+          <h2>Find Your Car</h2>
           
-          
-            
-              Make
-              
-                All Makes
+          <div className="filter-grid">
+            <div className="filter-group">
+              <label htmlFor="make">Make</label>
+              <select 
+                id="make" 
+                name="make" 
+                value={filters.make} 
+                onChange={handleFilterChange}
+              >
+                <option value="">All Makes</option>
                 {uniqueMakes.map(make => (
-                  {make}
+                  <option key={make} value={make}>{make}</option>
                 ))}
-              
+              </select>
+            </div>
             
-            
-            
-              Model
-              
-                All Models
+            <div className="filter-group">
+              <label htmlFor="model">Model</label>
+              <select 
+                id="model" 
+                name="model" 
+                value={filters.model} 
+                onChange={handleFilterChange}
+                disabled={!filters.make}
+              >
+                <option value="">All Models</option>
                 {uniqueModels.map(model => (
-                  {model}
+                  <option key={model} value={model}>{model}</option>
                 ))}
-              
+              </select>
+            </div>
             
+            <div className="filter-group">
+              <label htmlFor="yearRange">Year Range</label>
+              <div className="year-range">
+                <input 
+                  type="number" 
+                  id="yearMin" 
+                  name="yearMin" 
+                  value={filters.yearMin} 
+                  onChange={handleFilterChange}
+                  placeholder="Min Year"
+                />
+                <input 
+                  type="number" 
+                  id="yearMax" 
+                  name="yearMax" 
+                  value={filters.yearMax} 
+                  onChange={handleFilterChange}
+                  placeholder="Max Year"
+                />
+              </div>
+            </div>
             
-            
-              Year Range
-              
-                
-                
-              
-            
-            
-            
-              Price Range
-              
-                
-                
-              
-            
+            <div className="filter-group">
+              <label htmlFor="priceRange">Price Range</label>
+              <div className="price-range">
+                <input 
+                  type="number" 
+                  id="priceMin" 
+                  name="priceMin" 
+                  value={filters.priceMin} 
+                  onChange={handleFilterChange}
+                  placeholder="Min Price"
+                />
+                <input 
+                  type="number" 
+                  id="priceMax" 
+                  name="priceMax" 
+                  value={filters.priceMax} 
+                  onChange={handleFilterChange}
+                  placeholder="Max Price"
+                />
+              </div>
+            </div>
+          </div>
           
-          
-          
-            
+          <div className="filter-buttons">
+            <button 
+              className="secondary-button" 
+              onClick={resetFilters}
+            >
               Reset Filters
-            
-          
-        
+            </button>
+          </div>
+        </div>
         
         {/* Car list section */}
         {currentCars.length === 0 ? (
-          No cars match your search criteria
+          <div className="no-results">No cars match your search criteria</div>
         ) : (
-          
-            
-              Make/Model
-              Year
-              Price
-              Mileage
-              Location
-              Details
-            
+          <div className="car-list">
+            <div className="car-list-header">
+              <div>Make/Model</div>
+              <div>Year</div>
+              <div>Price</div>
+              <div>Mileage</div>
+              <div>Location</div>
+              <div>Details</div>
+            </div>
             
             {currentCars.map(car => (
-              
-                
-                  {car.make} {car.model}
-                  {car.year}
-                  ${car.price.toLocaleString()}
-                  {car.mileage.toLocaleString()} mi
-                  {car.location}
-                  
+              <React.Fragment key={car.id}>
+                <div className="car-item">
+                  <div><strong>{car.make} {car.model}</strong></div>
+                  <div>{car.year}</div>
+                  <div>${car.price.toLocaleString()}</div>
+                  <div>{car.mileage.toLocaleString()} mi</div>
+                  <div>{car.location}</div>
+                  <div>
                     <button 
                       className="primary-button" 
                       onClick={() => handleCarSelect(car)}
                     >
                       {selectedCar && selectedCar.id === car.id ? 'Hide' : 'View'}
-                    
-                  
-                
+                    </button>
+                  </div>
+                </div>
                 
                 {/* Details section (only shows when a car is selected) */}
                 {selectedCar && selectedCar.id === car.id && (
-                  
-                    
-                      
-                        
-                          VIN:
-                          {car.vin}
-                        
-                        
-                          Fuel Type:
-                          {car.fuel_type}
-                        
-                        
-                          Transmission:
-                          {car.transmission}
-                        
-                        
-                          Color:
-                          {car.color}
-                        
-                        
-                          Condition:
-                          {car.condition}
-                        
-                      
-                      
-                        
-                          Features:
-                          
+                  <div className="car-details">
+                    <div className="details-grid">
+                      <div>
+                        <div className="details-item">
+                          <span className="details-label">VIN:</span>
+                          <span>{car.vin}</span>
+                        </div>
+                        <div className="details-item">
+                          <span className="details-label">Fuel Type:</span>
+                          <span>{car.fuel_type}</span>
+                        </div>
+                        <div className="details-item">
+                          <span className="details-label">Transmission:</span>
+                          <span>{car.transmission}</span>
+                        </div>
+                        <div className="details-item">
+                          <span className="details-label">Color:</span>
+                          <span>{car.color}</span>
+                        </div>
+                        <div className="details-item">
+                          <span className="details-label">Condition:</span>
+                          <span>{car.condition}</span>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="details-item">
+                          <span className="details-label">Features:</span>
+                          <div className="feature-tags">
                             {car.features.map((feature, index) => (
-                              {feature}
+                              <span key={index} className="feature-tag">{feature}</span>
                             ))}
-                          
-                        
-                      
-                    
-                  
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 )}
-              
+              </React.Fragment>
             ))}
-          
+          </div>
         )}
         
         {/* Pagination section */}
-        
+        <div className="pagination">
           <button 
             className="secondary-button"
             onClick={() => paginate(1)}
             disabled={currentPage === 1}
           >
             First
-          
+          </button>
           
           <button 
             className="secondary-button"
@@ -313,11 +354,11 @@ const CarBrowser = () => {
             disabled={currentPage === 1}
           >
             Previous
+          </button>
           
-          
-          
+          <div className="page-info">
             Page {currentPage} of {Math.ceil(filteredCars.length / carsPerPage)}
-          
+          </div>
           
           <button 
             className="secondary-button"
@@ -325,7 +366,7 @@ const CarBrowser = () => {
             disabled={currentPage === Math.ceil(filteredCars.length / carsPerPage)}
           >
             Next
-          
+          </button>
           
           <button 
             className="secondary-button"
@@ -333,8 +374,8 @@ const CarBrowser = () => {
             disabled={currentPage === Math.ceil(filteredCars.length / carsPerPage)}
           >
             Last
-          
-        
-      
+          </button>
+        </div>
+      </div>
     );
   };
